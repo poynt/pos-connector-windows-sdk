@@ -177,7 +177,7 @@ namespace PoyntTestAppCSharp
             salesRequest.Payment.Order.Items.AddRange(items);
             salesRequest.Payment.Order.Notes = "order notes";
             salesRequest.Payment.Notes = "payment notes";
-            salesRequest.Payment.ReferenceId = "ExtReferenceID";
+            // Set any references on the transaction
             salesRequest.Payment.References = new List<TransactionReference>()
             {
                 new TransactionReference()
@@ -188,13 +188,27 @@ namespace PoyntTestAppCSharp
                 }
             };
 
-
-            salesRequest.Payment.ReferenceId = "reference-id-333";
             salesRequest.Payment.ManualEntry = true;
+            // Set to skip receipt screen
+            salesRequest.Payment.SkipReceiptScreen = false;
+            // Set to skip signature screen
+            salesRequest.Payment.SkipSignatureScreen = false;
+            // pre select receipt choice
+            salesRequest.ReceiptPreference = new ReceiptPreference()
+            {
+                ReceiptType = ReceiptType.EMAIL,
+                Recipient = "dev@poynt.co"
+            }
 
             var response = api.AuthorizeSales(salesRequest);
 
             Console.WriteLine("AuthorizeSales Payment Status: " + response.Payment.Status);
+        }
+
+        static void GetPaymentFlowStatus(PoyntPOSApi api)
+        {
+            PaymentFlowState response = api.GetPaymentFlowState();
+            Console.WriteLine("Current Payment Flow State: " + response.CurrentState);
         }
     }
 }
@@ -214,3 +228,4 @@ The following API commands are supported:
  - ScanData
  - ShowItemsOnSecondScreen
  - VoiceAuthorizeSales
+ - GetPaymentFlowState
